@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>ToDo App</title>
+    <!--favicon -->
+    <link href="favicon.ico" rel="shortcut icon">
+    <!-- fontawesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+          rel="stylesheet"/>
+    <!-- normalize css -->
+    <link href="./css/normalize.css" rel="stylesheet">
+    <!-- main styles -->
+    <link href="./css/styles.css" rel="stylesheet"/>
+</head>
+
+<body>
+<div class="wrapper">
+    <div id="main">
+        <div id="header">
+            <div id="title">ToDo App</div>
+        </div>
+        <div id="add-container">
+            <section class="input-section">
+                <label for="add-input" style="display: none;"></label>
+                <input autocomplete="on" id="add-input" maxlength="28"
+                       placeholder="Enter todo item" type="text"/>
+                <span class="counter" id="counter">28</span>
+            </section>
+            <button class="button" id="add-button">Add Item</button>
+        </div>
+        <div id="list-container">
+            <ul id="list"></ul>
+        </div>
+    </div>
+    <template id="template">
+        <li class="todo-item">
+            <label class="custom">
+                <input autocomplete="on" class="checkbox" name="item"
+                       type="checkbox"/>
+                <span class="item"></span>
+                <span class="checkmark"></span>
+            </label>
+            <span class="custom-label">
+                <i class='fas fa-edit'></i>
+                <i class="fas fa-trash-alt"></i>
+            </span>
+        </li>
+    </template>
+</div>
+<!-- jquery scripts -->
+<script src="./js/jquery-3.7.1.min.js" type="text/javascript"></script>
+<!-- sweat alert scripts -->
+<script src="./js/sweetalert.min.js" type="text/javascript"></script>
+<!-- main scripts js-->
+<script src="./js/scripts.js" type="text/javascript"></script>
+</body>
+
+</html>
