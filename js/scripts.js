@@ -371,6 +371,12 @@ window.onload = function () {
 
    } //end of hasClass function
 
+   /**
+    * @description
+    * @param container
+    * @param y
+    * @returns {*}
+    */
    function getDragAfterElement(container, y) {
       const draggableElements = [
          ...container.querySelectorAll('li:not(.dragging)'),
@@ -396,6 +402,10 @@ window.onload = function () {
 
    }//end of getDragAfterElement Function
 
+   /**
+    * @description
+    * @param e
+    */
    function doDragStart(e) {
       draggedItem = e.target;
 
@@ -413,11 +423,13 @@ window.onload = function () {
 
    }//end of doDragEnd Function
 
+   /**
+    * @description
+    * @param e
+    */
    function doDragOver(e) {
       e.preventDefault();
-
       const afterElement = getDragAfterElement(toDoList, e.clientY);
-      const currentElement = document.querySelector('.dragging');
 
       if (afterElement === null) {
          toDoList.appendChild(draggedItem);
