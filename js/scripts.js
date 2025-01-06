@@ -18,6 +18,8 @@ window.onload = function () {
    let editItemText;
    let editItemIsChecked = false;
 
+   let draggedItem = null;
+
    if (windowScreen <= 320) {
       addInput.setAttribute('maxlength', 24);
       counter.innerText = 24;
@@ -183,6 +185,7 @@ window.onload = function () {
       const template = document.querySelector('#template');
       const clone = document.importNode(template.content, true);
       clone.querySelector('.todo-item').setAttributeNode(attr);
+      clone.querySelector('.todo-item').setAttribute('draggable', 'true');
       clone.querySelector('.item').textContent = todoItem;
       clone
          .querySelector('.checkbox')
@@ -368,6 +371,63 @@ window.onload = function () {
 
    } //end of hasClass function
 
+   function getDragAfterElement(container, y) {
+      const draggableElements = [
+         ...container.querySelectorAll('li:not(.dragging)'),
+      ];
+
+      return draggableElements.reduce(
+         (closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+               return {
+                  offset: offset,
+                  element: child,
+               };
+            } else {
+               return closest;
+            }
+         },
+         {
+            offset: Number.NEGATIVE_INFINITY,
+         }
+      ).element;
+
+   }//end of getDragAfterElement Function
+
+   function doDragStart(e) {
+      draggedItem = e.target;
+
+      setTimeout(() => {
+         e.target.style.display = 'none';
+      },0);
+
+   }//end of doDragStart Function
+
+   function doDragEnd(e) {
+      setTimeout(() => {
+         e.target.style.display = '';
+         draggedItem = null;
+      }, 0);
+
+   }//end of doDragEnd Function
+
+   function doDragOver(e) {
+      e.preventDefault();
+
+      const afterElement = getDragAfterElement(toDoList, e.clientY);
+      const currentElement = document.querySelector('.dragging');
+
+      if (afterElement === null) {
+         toDoList.appendChild(draggedItem);
+
+      } else {
+         toDoList.insertBefore(draggedItem, afterElement);
+      }
+
+   }//end of doDragOver Function
+
    /************************* event listeners *************************/
    window.addEventListener('DOMContentLoaded', getInitialTodoList);
    addButton.addEventListener('click', addTodoItem);
@@ -375,6 +435,9 @@ window.onload = function () {
    addInput.addEventListener('keyup', getCharacterCount);
    toDoList.addEventListener('click', deleteTodoItem);
    toDoList.addEventListener('click', editTodoItem);
+   toDoList.addEventListener('dragstart', doDragStart);
+   toDoList.addEventListener('dragend', doDragEnd);
+   toDoList.addEventListener('dragover', doDragOver);
 
    displayTodoItems();
 
