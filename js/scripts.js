@@ -4,6 +4,7 @@
 window.onload = function () {
    let localToDoList = getInitialTodoList();
 
+
    /************************* variables *************************/
    const addButton = document.getElementById('add-button');
    const addInput = document.getElementById('add-input');
@@ -11,6 +12,12 @@ window.onload = function () {
    const counter = document.getElementById('counter');
    const maxLength = addInput.getAttribute('maxlength');
    const windowScreen = window.screen.availWidth;
+
+
+
+   const collator = new Intl.Collator('en', { numeric: true });
+
+
 
    let isEditing = false;
    let editID = '';
@@ -30,6 +37,8 @@ window.onload = function () {
 
    }
 
+
+
    /************************* functions *************************/
    /**
     * @description -
@@ -39,10 +48,11 @@ window.onload = function () {
       let inputValue = addInput.value.trim();
       const id = self.crypto.randomUUID();
       let isChecked = false;
+      let top = null;
 
       if (inputValue && !isEditing) {
-         createListItem(id, inputValue, isChecked);
-         addToLocalStorage(id, inputValue, isChecked);
+         createListItem(id, inputValue, isChecked, top);
+         addToLocalStorage(id, inputValue, isChecked, top);
          setToDefaultSettings();
 
       } else if (inputValue && isEditing) {
@@ -70,14 +80,17 @@ window.onload = function () {
          let inputValue = addInput.value.trim();
          const id = self.crypto.randomUUID();
          let isChecked = false;
+         let top = null;
 
          if (inputValue && !isEditing) {
-            let attr = document.createAttribute('data-id');
-            attr.value = id;
+            let attr1 = document.createAttribute('data-id');
+            let attr2 = document.createAttribute('data-top');
+            attr1.value = id;
+            attr2.value = top;
             isChecked = hasClass('input.checkbox', 'completed');
 
-            createListItem(id, inputValue, isChecked);
-            addToLocalStorage(id, inputValue, isChecked);
+            createListItem(id, inputValue, isChecked, top);
+            addToLocalStorage(id, inputValue, isChecked, top);
             setToDefaultSettings();
 
          } else if (inputValue && isEditing) {
@@ -101,7 +114,7 @@ window.onload = function () {
          }
       }
 
-   }//end of addToItemWithEnterKey Function
+   }//end of addToDoItemWithEnterKey Function
 
    /**
     * @description
@@ -178,13 +191,16 @@ window.onload = function () {
       }
    }//end of updateIsCheckedStatus Function
 
-   function createListItem(id, todoItem, isChecked) {
-      let attr = document.createAttribute('data-id');
-      attr.value = id;
+   function createListItem(id, todoItem, isChecked, top) {
+      let attr1 = document.createAttribute('data-id');
+      let attr2 = document.createAttribute('data-top');
+      attr1.value = id;
+      attr2.value = top;
 
       const template = document.querySelector('#template');
       const clone = document.importNode(template.content, true);
-      clone.querySelector('.todo-item').setAttributeNode(attr);
+      clone.querySelector('.todo-item').setAttributeNode(attr1);
+      clone.querySelector('.todo-item').setAttributeNode(attr2);
       clone.querySelector('.todo-item').setAttribute('draggable', 'true');
       clone.querySelector('.item').textContent = todoItem;
       clone
@@ -204,14 +220,18 @@ window.onload = function () {
     * @param id
     * @param todoItem
     * @param isChecked
+    * @param top
     */
-   function createDisplayListItem(id, todoItem, isChecked) {
-      let attr = document.createAttribute('data-id');
-      attr.value = id;
+   function createDisplayListItem(id, todoItem, isChecked, top) {
+      let attr1 = document.createAttribute('data-id');
+      let attr2 = document.createAttribute('data-top');
+      attr1.value = id;
+      attr2.value = top;
 
       const template = document.querySelector('#template');
       const clone = document.importNode(template.content, true);
-      clone.querySelector('.todo-item').setAttributeNode(attr);
+      clone.querySelector('.todo-item').setAttributeNode(attr1);
+      clone.querySelector('.todo-item').setAttributeNode(attr2);
       clone.querySelector('.item').textContent = todoItem;
       clone
          .querySelector('.checkbox')
@@ -223,6 +243,8 @@ window.onload = function () {
 
       toDoList.appendChild(clone);
 
+
+
    } // end of createDisplayListItem function
 
    /**
@@ -232,8 +254,30 @@ window.onload = function () {
       localToDoList = getLocalStorage();
 
       if (localToDoList.length > 0) {
-         localToDoList.forEach(todo => createDisplayListItem(todo.id, todo.todoItem, todo.isChecked));
+         localToDoList.forEach(todo => createDisplayListItem(todo.id, todo.todoItem, todo.isChecked, todo.top));
       }
+
+      let todoItems = document.querySelectorAll('.todo-item');
+      todoItems = Array.from(todoItems);
+      let posY;
+      for (let item of todoItems) {
+         posY = getElementPositionTop(item);
+         item.dataset.top = posY.toString();
+         console.log(item);
+      }
+
+      for (let index in localToDoList) {
+         if (localToDoList[index].id === todoItems[index].dataset.id) {
+            localToDoList[index].top = todoItems[index].dataset.top;
+         }
+
+      }
+
+      localToDoList.sort((a, b) => a.top - b.top);
+
+      localStorage.setItem('gfg-toDoApp', JSON.stringify(localToDoList));
+
+
    } //end of displayTodoItems function
 
    /**
@@ -269,16 +313,20 @@ window.onload = function () {
     * @param id
     * @param todoItem
     * @param isChecked
+    * @param top
     */
-   function addToLocalStorage(id, todoItem, isChecked) {
+   function addToLocalStorage(id, todoItem, isChecked, top) {
       const todo = {
          id,
          todoItem,
-         isChecked
+         isChecked,
+         top
       };
 
       let localStorageTodoListArr = getLocalStorage();
       localStorageTodoListArr.push(todo);
+
+      console.log(localStorageTodoListArr)
 
       localStorage.setItem('gfg-toDoApp', JSON.stringify(localStorageTodoListArr));
 
@@ -313,6 +361,25 @@ window.onload = function () {
       localStorage.setItem('gfg-toDoApp', JSON.stringify(localToDoListArr));
 
    } //end of updateIsCheckedToLocalStorage function
+
+   /**
+    * @description
+    * @param id
+    * @param top
+    */
+   function updateElementTopToLocalStorage(id, top) {
+      let localToDoListArr = getLocalStorage();
+      localToDoListArr = localToDoListArr.map(todo => {
+         if (todo.id === id) {
+            todo.top = top;
+
+         }
+         return todo;
+      });
+
+      localStorage.setItem('gfg-toDoApp', JSON.stringify(localToDoListArr));
+
+   }//end of updateElementTopToLocalStorage Function
 
    /**
     * @description
@@ -359,6 +426,11 @@ window.onload = function () {
       characterCount < 10 ? counter.innerText = `0${characterCount}` : counter.innerText = `${characterCount}`;
 
    } //end of the getCharacterCount function
+
+   function getElementPositionTop(element) {
+      return Math.round(element.getBoundingClientRect().top);
+
+   }//end of getElementPositionY Function
 
    /**
     * @description
