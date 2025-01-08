@@ -13,12 +13,6 @@ window.onload = function () {
    const maxLength = addInput.getAttribute('maxlength');
    const windowScreen = window.screen.availWidth;
 
-
-
-   const collator = new Intl.Collator('en', { numeric: true });
-
-
-
    let isEditing = false;
    let editID = '';
    let editItem;
@@ -27,16 +21,28 @@ window.onload = function () {
 
    let draggedItem = null;
 
-   if (windowScreen <= 320) {
-      addInput.setAttribute('maxlength', 24);
-      counter.innerText = 24;
+   if (navigator.storage && navigator.storage.persisted) {
 
-   } else {
-      addInput.setAttribute('maxlength', 28);
-      counter.innerText = 28;
+      navigator.storage.persisted().then((wellWasIt) => {
 
+         navigator.storage.persist().then((allowed) => {
+            if (!allowed) {
+               allowed = true
+               console.log('Persisted storage', allowed);
+            }
+         });
+      });
    }
 
+   if (windowScreen <= 320) {
+      addInput.setAttribute('maxlength', '24');
+      counter.innerText = '24';
+
+   } else {
+      addInput.setAttribute('maxlength', '28');
+      counter.innerText = '28';
+
+   }
 
 
    /************************* functions *************************/
@@ -48,7 +54,7 @@ window.onload = function () {
       let inputValue = addInput.value.trim();
       const id = self.crypto.randomUUID();
       let isChecked = false;
-      let top = null;
+      let top = setElementPositionTop();
 
       if (inputValue && !isEditing) {
          createListItem(id, inputValue, isChecked, top);
@@ -80,7 +86,7 @@ window.onload = function () {
          let inputValue = addInput.value.trim();
          const id = self.crypto.randomUUID();
          let isChecked = false;
-         let top = null;
+         let top = setElementPositionTop();
 
          if (inputValue && !isEditing) {
             let attr1 = document.createAttribute('data-id');
@@ -213,6 +219,8 @@ window.onload = function () {
 
       toDoList.appendChild(clone);
 
+      updateElementTopToLocalStorage(id,top);
+
    } //end of the createListItem function
 
    /**
@@ -243,8 +251,6 @@ window.onload = function () {
 
       toDoList.appendChild(clone);
 
-
-
    } // end of createDisplayListItem function
 
    /**
@@ -263,7 +269,7 @@ window.onload = function () {
       for (let item of todoItems) {
          posY = getElementPositionTop(item);
          item.dataset.top = posY.toString();
-         console.log(item);
+
       }
 
       for (let index in localToDoList) {
@@ -276,7 +282,6 @@ window.onload = function () {
       localToDoList.sort((a, b) => a.top - b.top);
 
       localStorage.setItem('gfg-toDoApp', JSON.stringify(localToDoList));
-
 
    } //end of displayTodoItems function
 
@@ -326,8 +331,6 @@ window.onload = function () {
       let localStorageTodoListArr = getLocalStorage();
       localStorageTodoListArr.push(todo);
 
-      console.log(localStorageTodoListArr)
-
       localStorage.setItem('gfg-toDoApp', JSON.stringify(localStorageTodoListArr));
 
    }//end of addToLocalStorage Function
@@ -341,7 +344,7 @@ window.onload = function () {
       localStorageTodoListArr = localStorageTodoListArr.filter(todo => todo.id !== id);
 
       localStorage.setItem('gfg-toDoApp', JSON.stringify(localStorageTodoListArr));
-
+      // updateElementPositionTop();
    }//end of removeFromLocalStorage Function
 
    /**
@@ -416,6 +419,7 @@ window.onload = function () {
       }, 250);
       addInput.focus();
 
+
    } //end of setToDefaultSettings function
 
    /**
@@ -427,10 +431,23 @@ window.onload = function () {
 
    } //end of the getCharacterCount function
 
-   function getElementPositionTop(element) {
-      return Math.round(element.getBoundingClientRect().top);
+   function getElementPositionTop(elem) {
+      return Math.round(elem.getBoundingClientRect().top);
 
    }//end of getElementPositionY Function
+
+   function setElementPositionTop() {
+      let position;
+      if (toDoList.lastElementChild === null || toDoList.lastElementChild === undefined) {
+         position = 40;
+
+      } else {
+         position = Math.round(toDoList.lastElementChild.getBoundingClientRect().top) + 40;
+
+      }
+      return position.toString();
+
+   }//end of setElementPositionTop Function
 
    /**
     * @description
@@ -443,6 +460,28 @@ window.onload = function () {
 
    } //end of hasClass function
 
+   function updateElementPositionTop() {
+      let todoItems = document.querySelectorAll('.todo-item');
+      todoItems = Array.from(todoItems);
+      let posY;
+      for (let item of todoItems) {
+         posY = getElementPositionTop(item);
+         item.dataset.top = posY.toString();
+         console.log(item);
+      }
+
+      for (let index in localToDoList) {
+         if (localToDoList[index].id === todoItems[index].dataset.id) {
+            localToDoList[index].top = todoItems[index].dataset.top;
+         }
+      }
+
+      localToDoList.sort((a, b) => a.top - b.top);
+
+      localStorage.setItem('gfg-toDoApp', JSON.stringify(localToDoList));
+
+   }//end of updateElementPositionTop Function
+
    /**
     * @description
     * @param container
@@ -453,6 +492,10 @@ window.onload = function () {
       const draggableElements = [
          ...container.querySelectorAll('li:not(.dragging)'),
       ];
+
+      setTimeout(() => {
+         updateElementPositionTop();
+      }, 1000);
 
       return draggableElements.reduce(
          (closest, child) => {
@@ -509,8 +552,11 @@ window.onload = function () {
       } else {
          toDoList.insertBefore(draggedItem, afterElement);
       }
+      console.log(afterElement);
+      updateElementPositionTop();
 
    }//end of doDragOver Function
+
 
    /************************* event listeners *************************/
    window.addEventListener('DOMContentLoaded', getInitialTodoList);
