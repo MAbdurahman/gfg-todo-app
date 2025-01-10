@@ -5,7 +5,6 @@
     <meta charset="UTF-8"/>
     <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>ToDo App</title>
     <!--favicon -->
     <link href="favicon.ico" rel="shortcut icon">
     <!-- fontawesome -->
@@ -15,9 +14,15 @@
     <link href="./css/normalize.css" rel="stylesheet">
     <!-- main styles -->
     <link href="./css/styles.css" rel="stylesheet"/>
+    <title>ToDo App</title>
 </head>
 
 <body>
+<!-- begin of preloader -->
+<div id="preloader">
+    <img src="img/preloader.gif" alt="loading spinner" id="preloader-gif"/>
+</div>
+<!-- begin of main -->
 <div class="wrapper">
     <div id="main">
         <div id="header">
@@ -30,7 +35,7 @@
                        placeholder="Enter todo item" type="text"/>
                 <span class="counter" id="counter">28</span>
             </section>
-            <button class="button" id="add-button">Add Item</button>
+            <button type="button" class="button" id="add-button">Add Item</button>
         </div>
         <div id="list-container">
             <ul id="list"></ul>
