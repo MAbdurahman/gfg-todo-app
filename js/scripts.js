@@ -80,6 +80,7 @@ window.onload = function () {
       if (inputValue && !isEditing) {
          createListItem(id, inputValue, isChecked, top);
          addTodoItemToLocalStorage(id, inputValue, isChecked, top);
+         updateTodoItemTopPositionToLocalStorage();
          setToDefaultSettings();
 
       } else if (inputValue && isEditing) {
@@ -344,7 +345,7 @@ window.onload = function () {
    } //end of getInitialTodoList function
 
    /**
-    * @description
+    * @description -
     * @returns {any|*[]} - an array of todoItem Objects or an empty Array
     */
    function getLocalStorage() {
@@ -407,7 +408,7 @@ window.onload = function () {
    } //end of updateIsCheckedToLocalStorage function
 
    /**
-    * @description
+    * @description -
     * @param id
     * @param todoItem
     * @param isChecked
@@ -484,7 +485,11 @@ window.onload = function () {
 
    } //end of the getCharacterCount function
 
-
+   /**
+    * @description -
+    * @param elem
+    * @returns {number}
+    */
    function getElementPositionTop(elem) {
       return Math.round(elem.offsetTop);
 
@@ -492,21 +497,16 @@ window.onload = function () {
 
    /**
     * @description - sets the initial position top of the todoItem
-    * @returns {string}
+    * @returns {string} - a value in form of a String
     */
    function setElementPositionTop() {
       let position;
 
-      if (toDoList.lastElementChild === null || toDoList.lastElementChild === undefined) {
+      if (toDoList.lastElementChild === null) {
          position = 0;
-         console.log('lastElementChild is null and toDoList offsetTop is->', toDoList.offsetTop)
 
       } else {
-         // position = Math.round(toDoList.lastElementChild.offsetTop) + 43;
          position = Math.round(getElementPositionTop(toDoList.lastElementChild))
-         console.log('position is ', position);
-         console.log('lastElementChild has a value and toDoList offsetTop is->', toDoList.offsetTop)
-         console.log(`lastElementChild offsetTop is ${Math.round(toDoList.lastElementChild.offsetTop)}`);
 
       }
       return position.toString();
@@ -557,7 +557,6 @@ window.onload = function () {
 
    }//end of updateTodoItemPositionTop Function
 
-
    /**
     * @description
     * @param container
@@ -602,6 +601,10 @@ window.onload = function () {
 
    }//end of doDragStart Function
 
+   /**
+    * @description -
+    * @param e
+    */
    function doDragEnd(e) {
       setTimeout(() => {
          e.target.style.display = '';
@@ -624,7 +627,7 @@ window.onload = function () {
       } else {
          toDoList.insertBefore(draggedItem, afterElement);
       }
-      // updateTodoItemPositionTop();
+
 
    }//end of doDragOver Function
 
