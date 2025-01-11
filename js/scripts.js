@@ -375,7 +375,8 @@ window.onload = function () {
    }//end of addTodoItemToLocalStorage Function
 
    /**
-    * @description - removes todoItem from localStorage
+    * @description - removes todoItem from localStorage and calls the function
+    * updateTodoItemPositionTop
     * @param id - todoItem ID
     */
    function removeTodoItemFromLocalStorage(id) {
@@ -383,7 +384,7 @@ window.onload = function () {
       localStorageTodoListArr = localStorageTodoListArr.filter(todo => todo.id !== id);
 
       localStorage.setItem('gfg-toDoApp', JSON.stringify(localStorageTodoListArr));
-
+      updateTodoItemPositionTop();
 
    }//end of removeTodoItemFromLocalStorage Function
 
@@ -524,31 +525,35 @@ window.onload = function () {
 
    } //end of hasClass function
 
+   /**
+    * @description - updates todoItem dataset/.top to its current position and assigns
+    * the value to the todo in the local storage
+    */
    function updateTodoItemPositionTop() {
+
       let todoItems = document.querySelectorAll('.todo-item');
       todoItems = Array.from(todoItems);
-      console.log(todoItems);
-      /*let positionY;
-      for (let item of todoItems) {
-         positionY = setElementPositionTop();
-         item.dataset.top = positionY.toString();
 
-      }
+      if (todoItems.length > 0) {
+         let localToDoListArr = getLocalStorage();
+         let positionY = null;
 
-      for (let index in todoItems) {
-         if (localToDoList[index].id === todoItems[index].dataset.id) {
-            localToDoList[index].top = todoItems[index].top;
+         for (let todoItem of todoItems) {
+            positionY = getElementPositionTop(todoItem);
+            todoItem.dataset.top = positionY.toString();
          }
+
+         for (let index in localToDoListArr) {
+            if (localToDoListArr[index].id === todoItems[index].dataset.id) {
+               localToDoListArr[index].top = todoItems[index].dataset.top;
+            }
+         }
+
+         localToDoListArr.sort((a, b) => a.top - b.top);
+
+         localStorage.setItem('gfg-toDoApp', JSON.stringify(localToDoListArr));
+
       }
-
-      for (let index in localToDoList) {
-         updateTodoItemPositionTopToLocalStorage(localToDoList[index].id, localToDoList[index].top);
-      }
-
-      localToDoList.sort((a, b) => a.top - b.top);
-
-
-      localStorage.setItem('gfg-toDoApp', JSON.stringify(localToDoList));*/
 
    }//end of updateTodoItemPositionTop Function
 
