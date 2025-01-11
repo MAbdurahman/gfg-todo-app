@@ -199,6 +199,7 @@ body {
 
 ul#list {
 	position: relative;
+	top: 0;
 	list-style-type: none;
 	font-size: 1.150rem;
 	flex-basis: 100%;
@@ -273,6 +274,7 @@ span.custom-label {
 ==================================================================*/
 
 li.todo-item {
+	position: relative;
 	width: 108%;
 	display: flex;
 	flex-direction: row;

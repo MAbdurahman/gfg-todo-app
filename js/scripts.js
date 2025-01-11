@@ -118,6 +118,7 @@ window.onload = function () {
 
             createListItem(id, inputValue, isChecked, top);
             addTodoItemToLocalStorage(id, inputValue, isChecked, top);
+            updateTodoItemTopPositionToLocalStorage();
             setToDefaultSettings();
 
          } else if (inputValue && isEditing) {
@@ -254,7 +255,7 @@ window.onload = function () {
 
       toDoList.appendChild(clone);
 
-      // updateElementTopToLocalStorage(id);
+      // updateTodoItemPositionTopToLocalStorage(id);
 
    } //end of the createListItem function
 
@@ -286,7 +287,7 @@ window.onload = function () {
 
       toDoList.appendChild(clone);
 
-      // updateElementTopToLocalStorage(id);
+      // updateTodoItemPositionTopToLocalStorage(id);
 
    } // end of createDisplayListItem function
 
@@ -304,12 +305,11 @@ window.onload = function () {
       let todoItems = document.querySelectorAll('.todo-item');
       todoItems = Array.from(todoItems);
       let positionY;
-      console.log(todoItems)
+
       for (let item of todoItems) {
-         /*positionY = getElementPositionTop(item);*/
-         positionY = setElementPositionTop();
+         positionY = getElementPositionTop(item);
          item.dataset.top = positionY.toString();
-         console.log(positionY);
+
       }
 
       for (let index in localToDoList) {
@@ -384,6 +384,7 @@ window.onload = function () {
 
       localStorage.setItem('gfg-toDoApp', JSON.stringify(localStorageTodoListArr));
 
+
    }//end of removeTodoItemFromLocalStorage Function
 
    /**
@@ -407,27 +408,6 @@ window.onload = function () {
    /**
     * @description
     * @param id
-    * @param top
-    */
-   function updateElementTopToLocalStorage(id, top) {
-      let localToDoListArr = getLocalStorage();
-      localToDoListArr = localToDoListArr.map(todo => {
-         if (todo.id === id) {
-            todo.top = top;
-         }
-         return todo;
-
-      });
-
-      localToDoListArr.sort((a, b) => a.top - b.top);
-
-      localStorage.setItem('gfg-toDoApp', JSON.stringify(localToDoListArr));
-
-   }//end of updateElementTopToLocalStorage Function
-
-   /**
-    * @description
-    * @param id
     * @param todoItem
     * @param isChecked
     */
@@ -437,6 +417,7 @@ window.onload = function () {
          if (todo.id === id) {
             todo.todoItem = todoItem;
             todo.isChecked = isChecked;
+            console.log(getElementPositionTop(todo))
          }
          return todo;
       });
@@ -444,6 +425,37 @@ window.onload = function () {
       localStorage.setItem('gfg-toDoApp', JSON.stringify(localToDoListArr));
 
    } //end of updateEditTodoItemToLocalStorage function
+
+   /**
+    * @description -
+    */
+   function updateTodoItemTopPositionToLocalStorage() {
+      let localToDoListArr = getLocalStorage();
+
+      let todoItems = document.querySelectorAll('.todo-item');
+      todoItems = Array.from(todoItems);
+
+      let positionY = null;
+
+      if (localToDoListArr.length > 0) {
+         for (let todoItem of todoItems) {
+            positionY = getElementPositionTop(todoItem);
+            todoItem.dataset.top = positionY.toString();
+
+         }
+         for (let index in localToDoListArr) {
+            if (localToDoListArr[index].id === todoItems[index].dataset.id) {
+               localToDoListArr[index].top = todoItems[index].dataset.top;
+
+            }
+         }
+
+         localToDoListArr = localToDoListArr.sort((a, b) => a.top - b.top);
+
+         localStorage.setItem('gfg-toDoApp', JSON.stringify(localToDoListArr));
+      }
+
+   }//end of the updateTodoItemPositionToLocalStorage Function
 
    /**
     * @description - sets the default settings
@@ -475,7 +487,7 @@ window.onload = function () {
    function getElementPositionTop(elem) {
       return Math.round(elem.offsetTop);
 
-   }//end of getElementPositionY Function
+   }//end of getElementPositionTop Function
 
    /**
     * @description - sets the initial position top of the todoItem
@@ -486,9 +498,14 @@ window.onload = function () {
 
       if (toDoList.lastElementChild === null || toDoList.lastElementChild === undefined) {
          position = 0;
+         console.log('lastElementChild is null and toDoList offsetTop is->', toDoList.offsetTop)
 
       } else {
-         position = Math.round(toDoList.lastElementChild.offsetTop) + 43;
+         // position = Math.round(toDoList.lastElementChild.offsetTop) + 43;
+         position = Math.round(getElementPositionTop(toDoList.lastElementChild))
+         console.log('position is ', position);
+         console.log('lastElementChild has a value and toDoList offsetTop is->', toDoList.offsetTop)
+         console.log(`lastElementChild offsetTop is ${Math.round(toDoList.lastElementChild.offsetTop)}`);
 
       }
       return position.toString();
@@ -507,7 +524,7 @@ window.onload = function () {
 
    } //end of hasClass function
 
-   function updateElementPositionTop() {
+   function updateTodoItemPositionTop() {
       let todoItems = document.querySelectorAll('.todo-item');
       todoItems = Array.from(todoItems);
       console.log(todoItems);
@@ -525,7 +542,7 @@ window.onload = function () {
       }
 
       for (let index in localToDoList) {
-         updateElementTopToLocalStorage(localToDoList[index].id, localToDoList[index].top);
+         updateTodoItemPositionTopToLocalStorage(localToDoList[index].id, localToDoList[index].top);
       }
 
       localToDoList.sort((a, b) => a.top - b.top);
@@ -533,7 +550,8 @@ window.onload = function () {
 
       localStorage.setItem('gfg-toDoApp', JSON.stringify(localToDoList));*/
 
-   }//end of updateElementPositionTop Function
+   }//end of updateTodoItemPositionTop Function
+
 
    /**
     * @description
@@ -601,7 +619,7 @@ window.onload = function () {
       } else {
          toDoList.insertBefore(draggedItem, afterElement);
       }
-      // updateElementPositionTop();
+      // updateTodoItemPositionTop();
 
    }//end of doDragOver Function
 
