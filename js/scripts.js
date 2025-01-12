@@ -261,11 +261,12 @@ window.onload = function () {
    } //end of the createListItem function
 
    /**
-    * @description -
-    * @param id
-    * @param todoItem
-    * @param isChecked
-    * @param top
+    * @description - creates a todoItem that is to be displayed
+    * @param id - the todoItem ID
+    * @param todoItem - the todoItem text
+    * @param isChecked - the checked/completed status of the todoItem
+    * @param top - the offsetTop position of the todoItem in relation to the
+    * toDoList (its parent)
     */
    function createDisplayListItem(id, todoItem, isChecked, top) {
       let attr1 = document.createAttribute('data-id');
@@ -293,7 +294,7 @@ window.onload = function () {
    } // end of createDisplayListItem function
 
    /**
-    * @description
+    * @description - displays the toDoLists
     */
    function displayTodoItems() {
       localToDoList = getLocalStorage();
@@ -326,7 +327,7 @@ window.onload = function () {
    } //end of displayTodoItems function
 
    /**
-    * @description
+    * @description - get the data of the localStorage
     * @returns {any|*[]} - an array of todoItem Objects or an empty Array
     */
    function getInitialTodoList() {
@@ -345,7 +346,7 @@ window.onload = function () {
    } //end of getInitialTodoList function
 
    /**
-    * @description -
+    * @description - gets the data of the localStorage
     * @returns {any|*[]} - an array of todoItem Objects or an empty Array
     */
    function getLocalStorage() {
@@ -354,11 +355,11 @@ window.onload = function () {
    }//end of getLocalStorage function
 
    /**
-    * @description
-    * @param id
-    * @param todoItem
-    * @param isChecked
-    * @param top
+    * @description - adds the todoItem to localStorage
+    * @param id - the todoItem ID
+    * @param todoItem - the todoItem text
+    * @param isChecked - the checked/completed status of the todoItem
+    * @param top - the vertical position of the todoItem in its parent
     */
    function addTodoItemToLocalStorage(id, todoItem, isChecked, top) {
       const todo = {
@@ -408,10 +409,10 @@ window.onload = function () {
    } //end of updateIsCheckedToLocalStorage function
 
    /**
-    * @description -
-    * @param id
-    * @param todoItem
-    * @param isChecked
+    * @description - updates the edited todoItem to the localStorage
+    * @param id - the edited todoItem ID
+    * @param todoItem - the edited todoItem text
+    * @param isChecked - the checked/completed status of edited todoItem
     */
    function updateEditTodoItemToLocalStorage(id, todoItem, isChecked) {
       let localToDoListArr = getLocalStorage();
@@ -429,7 +430,7 @@ window.onload = function () {
    } //end of updateEditTodoItemToLocalStorage function
 
    /**
-    * @description -
+    * @description - updates the todoItem's data-top position to the localStorage
     */
    function updateTodoItemTopPositionToLocalStorage() {
       let localToDoListArr = getLocalStorage();
@@ -486,9 +487,9 @@ window.onload = function () {
    } //end of the getCharacterCount function
 
    /**
-    * @description -
-    * @param elem
-    * @returns {number}
+    * @description - gets the offsetTop of an element
+    * @param elem - the element
+    * @returns {number} - a rounded number of the element's offsetTop
     */
    function getElementPositionTop(elem) {
       return Math.round(elem.offsetTop);
@@ -558,10 +559,11 @@ window.onload = function () {
    }//end of updateTodoItemPositionTop Function
 
    /**
-    * @description
-    * @param container
-    * @param y
-    * @returns {*}
+    * @description - monitors the moving of the draggable element from the original
+    * container to the drop zone
+    * @param container - the original container
+    * @param y - the vertical position
+    * @returns {*} - offset to Number.NEGATIVE_INFINITY
     */
    function getDragAfterElement(container, y) {
       const draggableElements = [
@@ -589,8 +591,8 @@ window.onload = function () {
    }//end of getDragAfterElement Function
 
    /**
-    * @description
-    * @param e
+    * @description - monitors the start of dragging the draggable element
+    * @param e - the event of dragstart
     */
    function doDragStart(e) {
       draggedItem = e.target;
@@ -602,8 +604,8 @@ window.onload = function () {
    }//end of doDragStart Function
 
    /**
-    * @description -
-    * @param e
+    * @description - monitors the end of dragging the draggable element
+    * @param e - the event of dragend
     */
    function doDragEnd(e) {
       setTimeout(() => {
@@ -614,8 +616,9 @@ window.onload = function () {
    }//end of doDragEnd Function
 
    /**
-    * @description
-    * @param e
+    * @description - monitors when the dragging element is dragged over a valid drop
+    * target
+    * @param e - the event of dragover
     */
    function doDragOver(e) {
       e.preventDefault();
@@ -626,8 +629,8 @@ window.onload = function () {
 
       } else {
          toDoList.insertBefore(draggedItem, afterElement);
-      }
 
+      }
 
    }//end of doDragOver Function
 
