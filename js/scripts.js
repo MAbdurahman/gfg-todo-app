@@ -420,7 +420,7 @@ window.onload = function () {
          if (todo.id === id) {
             todo.todoItem = todoItem;
             todo.isChecked = isChecked;
-            console.log(getElementPositionTop(todo))
+            // console.log(getElementPositionTop(todo))
          }
          return todo;
       });
@@ -507,7 +507,7 @@ window.onload = function () {
          position = 0;
 
       } else {
-         position = Math.round(getElementPositionTop(toDoList.lastElementChild))
+         position = Math.round(getElementPositionTop(toDoList.lastElementChild)) + 43;
 
       }
       return position.toString();
