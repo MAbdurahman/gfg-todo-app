@@ -20,6 +20,7 @@ window.onload = function () {
    const counter = document.getElementById('counter');
    const maxLength = addInput.getAttribute('maxlength');
    const windowScreen = window.screen.availWidth;
+   const TODO_ITEM_HEIGHT = 42.6;
 
    let isEditing = false;
    let editID = '';
@@ -507,7 +508,7 @@ window.onload = function () {
          position = 0;
 
       } else {
-         position = Math.round(getElementPositionTop(toDoList.lastElementChild)) + 43;
+         position = Math.round(getElementPositionTop(toDoList.lastElementChild)) + TODO_ITEM_HEIGHT;
 
       }
       return position.toString();
